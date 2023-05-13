@@ -7,7 +7,7 @@ class Window(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.initUi() # Вызовите метод для инициализации интерфейса
+        self.initUi()  # Вызовите метод для инициализации интерфейса
 
     def initUi(self) -> None:
         """
