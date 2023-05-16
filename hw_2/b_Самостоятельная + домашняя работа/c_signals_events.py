@@ -37,13 +37,15 @@ class Window(QtWidgets.QWidget):
         self.initUi()
         self.initSignals()
 
+        self.task_bar_height = 70
+
     def initUi(self) -> None:
         """
         Доинициализация UI
 
         :return: None
         """
-        pass
+        self.window().installEventFilter(self)
 
     def initSignals(self) -> None:
         """
@@ -55,6 +57,31 @@ class Window(QtWidgets.QWidget):
         self.ui.pushButtonGetData.clicked.connect(self.onPushButtonGetData)
         self.ui.pushButtonLT.clicked.connect(self.onPushButtonLT)
         self.ui.pushButtonLB.clicked.connect(self.onPushButtonLB)
+        self.ui.pushButtonRT.clicked.connect(self.onPushButtonRT)
+        self.ui.pushButtonRB.clicked.connect(self.onPushButtonRB)
+        self.ui.pushButtonCenter.clicked.connect(self.onPushButtonCenter)
+
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
+        """
+
+        :param watched: Объект, за которым ведётся наблюдение.
+        :param event: Текущие события.
+        :return: bool
+        """
+        buttons = (self.ui.pushButtonLT,
+                   self.ui.pushButtonLB,
+                   self.ui.pushButtonRT,
+                   self.ui.pushButtonRB,
+                   self.ui.pushButtonCenter)
+
+        if watched in buttons and event.type() == QtCore.QEvent.Type.MouseButtonPress:
+            self.ui.plainTextEdit.clear()
+            self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}\n")
+
+        # if watched == self.window() and event.type() == QtCore.QEvent.Type.Move:
+        #     self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+
+        return super(Window, self).eventFilter(watched, event)
 
     def onPushButtonMoveCoords(self) -> None:
         """
@@ -62,9 +89,9 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
-        self.move(self.ui.spinBoxX.value(), self.ui.spinBoxY.value())
-        self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move(self.ui.spinBoxX.value(), self.ui.spinBoxY.value())
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonLT(self) -> None:
         """
@@ -72,9 +99,9 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
-        self.move(0, 0)
-        self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move(0, 0)
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonLB(self) -> None:
         """
@@ -82,9 +109,43 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
-        self.move(0, self.screen().geometry().height() - self.window().size().height() - 70)
-        self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move(0, self.screen().geometry().height() - self.window().size().height() - self.task_bar_height)
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+
+    def onPushButtonRT(self) -> None:
+        """
+        Обработка сигнала clicked для кнопки pushButtonRT
+
+        :return: None
+        """
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move(self.window().screen().geometry().width() - self.window().geometry().width(), 0)
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+
+    def onPushButtonRB(self) -> None:
+        """
+        Обработка сигнала clicked для кнопки pushButtonRB
+
+        :return: None
+        """
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move(self.window().screen().geometry().width() - self.window().geometry().width(),
+                           self.window().screen().geometry().height() - self.window().geometry().height() -
+                           self.task_bar_height)
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+
+    def onPushButtonCenter(self) -> None:
+        """
+        Обработка сигнала clicked для кнопки pushButtonCenter
+
+        :return: None
+        """
+        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
+        self.window().move((self.window().screen().geometry().width() - self.window().geometry().width()) // 2,
+                           (self.window().screen().geometry().height() - self.window().geometry().height() -
+                            self.task_bar_height) // 2)
+        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonGetData(self) -> None:
         """
@@ -111,36 +172,22 @@ class Window(QtWidgets.QWidget):
                                            f"текущее основное окно: "
                                            f"{self.window().objectName()}\n"
                                            f"разрешение экрана: "
-                                           f"{self.screen().geometry().width()}, "
-                                           f"{self.screen().geometry().height()}\n"
+                                           f"{self.window().screen().geometry().width()}, "
+                                           f"{self.window().screen().geometry().height()}\n"
                                            f"на каком экране находится окно: "
                                            f"{self.window().screen().name()}\n"
                                            f"размеры окна: "
-                                           f"{self.window().size().width()}, "
-                                           f"{self.window().size().height()}\n"
+                                           f"{self.window().geometry().width()}, "
+                                           f"{self.window().geometry().height()}\n"
                                            f"минимальные размеры окна: "
                                            f"{self.window().minimumSize().width()}, "
                                            f"{self.window().minimumSize().height()}\n"
                                            f"текущие координаты окна: "
                                            f"{self.window().x()}, {self.window().y()}\n"
                                            f"координаты центра приложения: "
-                                           f"{self.window().x() + self.window().size().width() // 2}, "
-                                           f"{self.window().y() + self.window().size().height() // 2}\n"
+                                           f"{self.window().x() + self.window().geometry().width() // 2}, "
+                                           f"{self.window().y() + self.window().geometry().height() // 2}\n"
                                            f"состояние окна: {window_state}\n")
-                                           # f"высота панели задач: {self.screen().findChild('bar', )}")
-
-    # def onWindowMove(self, move_func) -> None:
-    #     """
-    #     Декоратор при перемещении окна
-    #
-    #     :return: None
-    #     """
-    #     def wrapper(*args, **kwargs) -> None:
-    #         self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
-    #         move_func()
-    #         self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
-    #
-    #     return wrapper
 
 
 if __name__ == "__main__":
