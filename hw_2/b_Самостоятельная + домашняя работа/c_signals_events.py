@@ -16,8 +16,8 @@
     DONE * Координаты центра приложения
     DONE * Отслеживание состояния окна (свернуто/развёрнуто/активно/отображено)
 3. Возможность отслеживания состояния окна (вывод производить в консоль + добавлять время).
-    * При перемещении окна выводить его старую и новую позицию
-    * При изменении размера окна выводить его новый размер
+    DONE * При перемещении окна выводить его старую и новую позицию
+    DONE * При изменении размера окна выводить его новый размер
 """
 import time
 
@@ -45,7 +45,12 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.window().installEventFilter(self)
+        self.ui.pushButtonMoveCoords.installEventFilter(self)
+        self.ui.pushButtonLT.installEventFilter(self)
+        self.ui.pushButtonLB.installEventFilter(self)
+        self.ui.pushButtonRT.installEventFilter(self)
+        self.ui.pushButtonRB.installEventFilter(self)
+        self.ui.pushButtonCenter.installEventFilter(self)
 
     def initSignals(self) -> None:
         """
@@ -54,21 +59,24 @@ class Window(QtWidgets.QWidget):
         :return: None
         """
         self.ui.pushButtonMoveCoords.clicked.connect(self.onPushButtonMoveCoords)
-        self.ui.pushButtonGetData.clicked.connect(self.onPushButtonGetData)
         self.ui.pushButtonLT.clicked.connect(self.onPushButtonLT)
         self.ui.pushButtonLB.clicked.connect(self.onPushButtonLB)
         self.ui.pushButtonRT.clicked.connect(self.onPushButtonRT)
         self.ui.pushButtonRB.clicked.connect(self.onPushButtonRB)
         self.ui.pushButtonCenter.clicked.connect(self.onPushButtonCenter)
+        self.ui.pushButtonGetData.clicked.connect(self.onPushButtonGetData)
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
         """
+        Фильтр для обработки событий MouseButtonPress.
 
         :param watched: Объект, за которым ведётся наблюдение.
-        :param event: Текущие события.
+        :param event: Текущее событие.
         :return: bool
         """
-        buttons = (self.ui.pushButtonLT,
+
+        buttons = (self.ui.pushButtonMoveCoords,
+                   self.ui.pushButtonLT,
                    self.ui.pushButtonLB,
                    self.ui.pushButtonRT,
                    self.ui.pushButtonRB,
@@ -76,12 +84,23 @@ class Window(QtWidgets.QWidget):
 
         if watched in buttons and event.type() == QtCore.QEvent.Type.MouseButtonPress:
             self.ui.plainTextEdit.clear()
-            self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}\n")
-
-        # if watched == self.window() and event.type() == QtCore.QEvent.Type.Move:
-        #     self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
+            self.ui.plainTextEdit.setPlainText(f"{time.strftime('%H:%M:%S', time.localtime())} "
+                                               f"старая позиция: {self.window().x()}, {self.window().y()}")
 
         return super(Window, self).eventFilter(watched, event)
+
+    def event(self, event: QtCore.QEvent) -> bool:
+        """
+        Обработка событий QtCore.QEvent.Type.Move
+
+        :param event: Текущее событие.
+        :return: bool
+        """
+        if event.type() == QtCore.QEvent.Type.Move:
+            self.ui.plainTextEdit.appendPlainText(f"{time.strftime('%H:%M:%S', time.localtime())} "
+                                                  f"новая позиция: {self.window().x()}, {self.window().y()}")
+
+        return super(Window, self).event(event)
 
     def onPushButtonMoveCoords(self) -> None:
         """
@@ -89,9 +108,7 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move(self.ui.spinBoxX.value(), self.ui.spinBoxY.value())
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonLT(self) -> None:
         """
@@ -99,9 +116,7 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move(0, 0)
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonLB(self) -> None:
         """
@@ -109,9 +124,7 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move(0, self.screen().geometry().height() - self.window().size().height() - self.task_bar_height)
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonRT(self) -> None:
         """
@@ -119,9 +132,7 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move(self.window().screen().geometry().width() - self.window().geometry().width(), 0)
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonRB(self) -> None:
         """
@@ -129,11 +140,9 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move(self.window().screen().geometry().width() - self.window().geometry().width(),
                            self.window().screen().geometry().height() - self.window().geometry().height() -
                            self.task_bar_height)
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonCenter(self) -> None:
         """
@@ -141,11 +150,9 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.ui.plainTextEdit.setPlainText(f"старая позиция: {self.window().x()}, {self.window().y()}")
         self.window().move((self.window().screen().geometry().width() - self.window().geometry().width()) // 2,
                            (self.window().screen().geometry().height() - self.window().geometry().height() -
                             self.task_bar_height) // 2)
-        # self.ui.plainTextEdit.appendPlainText(f"новая позиция: {self.window().x()}, {self.window().y()}")
 
     def onPushButtonGetData(self) -> None:
         """
