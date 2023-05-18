@@ -4,16 +4,16 @@
 
 Программа должна обладать следующим функционалом:
 
-1. Добавить для dial возможность установки значений кнопками клавиатуры(+ и -),
+1. DONE Добавить для dial возможность установки значений кнопками клавиатуры(+ и -),
    выводить новые значения в консоль
 
-2. Соединить между собой QDial, QSlider, QLCDNumber
+2. DONE Соединить между собой QDial, QSlider, QLCDNumber
    (изменение значения в одном, изменяет значения в других)
 
-3. Для QLCDNumber сделать отображение в различных системах счисления (oct, hex, bin, dec),
+3. DONE Для QLCDNumber сделать отображение в различных системах счисления (oct, hex, bin, dec),
    изменять формат отображаемого значения в зависимости от выбранного в comboBox параметра.
 
-4. Сохранять значение выбранного в comboBox режима отображения
+4. DONE Сохранять значение выбранного в comboBox режима отображения
    и значение LCDNumber в QSettings, при перезапуске программы выводить
    в него соответствующие значения
 """
@@ -41,8 +41,13 @@ class Window(QtWidgets.QWidget):
         :return: None
         """
 
-        self.min_value = -10
-        self.max_value = 10
+        combo_box_save = QtCore.QSettings("combo_box_save")
+        print(combo_box_save.value("text", "dec"))
+        dial_save = QtCore.QSettings("dial_save")
+        print(dial_save.value("text", "0"))
+
+        self.min_value = -15
+        self.max_value = 15
 
         self.ui.horizontalSlider.setMinimum(self.min_value)
         self.ui.horizontalSlider.setMaximum(self.max_value)
@@ -52,7 +57,12 @@ class Window(QtWidgets.QWidget):
 
         self.ui.comboBox.addItems(["dec", "oct", "hex", "bin"])
 
-        # self.ui.dial.installEventFilter(self)
+        self.ui.lcdNumber.setDigitCount(7)
+
+        self.ui.comboBox.setCurrentText(combo_box_save.value("text", "dec"))
+        self.ui.dial.setSliderPosition(int(str(dial_save.value("text", "0"))))
+        self.ui.horizontalSlider.setSliderPosition(int(str(dial_save.value("text", "0"))))
+        self.ui.lcdNumber.display(self.base_converter(self.ui.dial.value()))
 
     def initSignals(self) -> None:
         """
@@ -63,29 +73,23 @@ class Window(QtWidgets.QWidget):
 
         self.ui.horizontalSlider.sliderMoved.connect(self.onHorizontalSliderMoved)
         self.ui.dial.sliderMoved.connect(self.onDialMoved)
+        self.ui.dial.valueChanged.connect(self.onDialMoved)
         self.ui.comboBox.currentTextChanged.connect(self.onComboBoxCurrentTextChanged)
 
-    # def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
-    #     """
-    #
-    #     :param watched:
-    #     :param event:
-    #     :return:
-    #     """
-    #     # widgets = (self.ui.lcdNumber, self.ui.horizontalSlider, self.ui.dial)
-    #
-    #     # if watched in widgets and self.ui.lcdNumber
-    #     pass
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        """
+        Обработка нажатия на клавиши клавиатуры
 
-    # def event(self, event: QtCore.QEvent) -> bool:
-    #     """
-    #
-    #     :param event:
-    #     :return:
-    #     """
-    #     # self.ui.dial
-    #     # if event.type() == QtCore.QEvent.Type(6):
-    #     pass
+        :param event: QtGui.QKeyEvent
+        :return: None
+        """
+
+        if event.text() == "+":
+            self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() + 1)
+            print(self.ui.dial.sliderPosition())
+        if event.text() == "-":
+            self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() - 1)
+            print(self.ui.dial.sliderPosition())
 
     def base_converter(self, num: int) -> str:
         """
@@ -110,8 +114,8 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.lcdNumber.display(self.base_converter(self.ui.horizontalSlider.value()))
         self.ui.dial.setSliderPosition(self.ui.horizontalSlider.value())
+        self.ui.lcdNumber.display(self.base_converter(self.ui.horizontalSlider.value()))
 
     def onDialMoved(self) -> None:
         """
@@ -119,8 +123,8 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.lcdNumber.display(self.base_converter(self.ui.dial.value()))
         self.ui.horizontalSlider.setSliderPosition(self.ui.dial.value())
+        self.ui.lcdNumber.display(self.base_converter(self.ui.dial.value()))
 
     def onComboBoxCurrentTextChanged(self) -> None:
         """
@@ -128,6 +132,19 @@ class Window(QtWidgets.QWidget):
         :return: None
         """
         self.ui.lcdNumber.display(self.base_converter(self.ui.horizontalSlider.value()))
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Обработка события "Закрытие окна"
+
+        :param event: QtGui.QCloseEvent
+        :return: None
+        """
+        combo_box_save = QtCore.QSettings("combo_box_save")
+        combo_box_save.setValue("text", self.ui.comboBox.currentText())
+
+        dial_save = QtCore.QSettings("dial_save")
+        dial_save.setValue("text", str(self.ui.dial.value()))
 
 
 if __name__ == "__main__":
