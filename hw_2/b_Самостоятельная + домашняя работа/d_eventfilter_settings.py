@@ -60,8 +60,10 @@ class Window(QtWidgets.QWidget):
         self.ui.lcdNumber.setDigitCount(7)
 
         self.ui.comboBox.setCurrentText(combo_box_save.value("text", "dec"))
-        self.ui.dial.setSliderPosition(int(str(dial_save.value("text", "0"))))
-        self.ui.horizontalSlider.setSliderPosition(int(str(dial_save.value("text", "0"))))
+        # self.ui.dial.setSliderPosition(int(str(dial_save.value("text", "0"))))
+        self.ui.dial.setValue(int(str(dial_save.value("text", "0"))))
+        # self.ui.horizontalSlider.setSliderPosition(int(str(dial_save.value("text", "0"))))
+        self.ui.horizontalSlider.setValue(int(str(dial_save.value("text", "0"))))
         self.ui.lcdNumber.display(self.base_converter(self.ui.dial.value()))
 
     def initSignals(self) -> None:
@@ -71,8 +73,9 @@ class Window(QtWidgets.QWidget):
         :return: None
         """
 
-        self.ui.horizontalSlider.sliderMoved.connect(self.onHorizontalSliderMoved)
-        self.ui.dial.sliderMoved.connect(self.onDialMoved)
+        # self.ui.horizontalSlider.sliderMoved.connect(self.onHorizontalSliderMoved) #  некорректно работают max & min
+        self.ui.horizontalSlider.valueChanged.connect(self.onHorizontalSliderMoved)
+        # self.ui.dial.sliderMoved.connect(self.onDialMoved) #  лишний сигнал
         self.ui.dial.valueChanged.connect(self.onDialMoved)
         self.ui.comboBox.currentTextChanged.connect(self.onComboBoxCurrentTextChanged)
 
@@ -85,11 +88,15 @@ class Window(QtWidgets.QWidget):
         """
 
         if event.text() == "+":
-            self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() + 1)
-            print(self.ui.dial.sliderPosition())
+            # self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() + 1)
+            # print(self.ui.dial.sliderPosition())
+            self.ui.dial.setValue(self.ui.dial.value() + 1)
+            print(self.ui.dial.value())
         if event.text() == "-":
-            self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() - 1)
-            print(self.ui.dial.sliderPosition())
+            # self.ui.dial.setSliderPosition(self.ui.dial.sliderPosition() - 1)
+            # print(self.ui.dial.sliderPosition())
+            self.ui.dial.setValue(self.ui.dial.value() - 1)
+            print(self.ui.dial.value())
 
     def base_converter(self, num: int) -> str:
         """
@@ -99,14 +106,14 @@ class Window(QtWidgets.QWidget):
         :return: str
         """
 
-        if self.ui.comboBox.currentText() == "dec":
-            return str(num)
-        elif self.ui.comboBox.currentText() == "oct":
+        if self.ui.comboBox.currentText() == "oct":
             return oct(num)
         elif self.ui.comboBox.currentText() == "hex":
             return hex(num)
-        else:
+        elif self.ui.comboBox.currentText() == "bin":
             return bin(num)
+        else:
+            return str(num)
 
     def onHorizontalSliderMoved(self) -> None:
         """
@@ -114,7 +121,8 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.dial.setSliderPosition(self.ui.horizontalSlider.value())
+        # self.ui.dial.setSliderPosition(self.ui.horizontalSlider.value())
+        self.ui.dial.setValue(self.ui.horizontalSlider.value())
         self.ui.lcdNumber.display(self.base_converter(self.ui.horizontalSlider.value()))
 
     def onDialMoved(self) -> None:
@@ -123,7 +131,8 @@ class Window(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.horizontalSlider.setSliderPosition(self.ui.dial.value())
+        # self.ui.horizontalSlider.setSliderPosition(self.ui.dial.value())
+        self.ui.horizontalSlider.setValue(self.ui.dial.value())
         self.ui.lcdNumber.display(self.base_converter(self.ui.dial.value()))
 
     def onComboBoxCurrentTextChanged(self) -> None:
