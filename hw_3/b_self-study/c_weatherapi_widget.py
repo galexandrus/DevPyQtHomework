@@ -44,6 +44,8 @@ class weatherWindow(QtWidgets.QWidget):
         self.ui.labelWindDirectionValue.setText("")
         self.ui.labelWindSpeedValue.setText("")
 
+        self.ui.pushButtonStop.setEnabled(False)
+
     def initThreads(self) -> None:
         """
         Инициализация потоков
@@ -51,6 +53,30 @@ class weatherWindow(QtWidgets.QWidget):
         :return: None
         """
         self.weatherThread = WeatherHandler()
+
+    def initSignals(self) -> None:
+        """
+        Инициализация сигналов
+
+        :return: None
+        """
+        self.weatherThread.weatherReceived.connect(self.updateWeather)
+
+    def updateWeather(self, weather: dict) -> None:
+        self.ui.labelDateTimeValue.setText(weather["time"])
+        self.ui.labelTemperatureValue.setText(weather["temperature"])
+        self.ui.labelWeatherCodeValue.setText(weather["weathercode"])
+        self.ui.labelIsDayValue.setText(weather["is_day"])
+        self.ui.labelWindDirectionValue.setText(weather["winddirection"])
+        self.ui.labelWindSpeedValue.setText(weather["windspeed"])
+
+    def handleWeatherThread(self) -> None:
+        """
+        Управление потоком
+
+        :return: None
+        """
+
 
 
 if __name__ == '__main__':

@@ -46,31 +46,43 @@ class WeatherHandler(QtCore.QThread):
         self.__api_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
         self.__delay = 10
         self.__status = None
+    
+    @property
+    def api_url(self) -> str:
+        return self.__api_url
 
-    def setDelay(self, delay) -> None:
-        """
-        Метод для установки времени задержки обновления сайта
+    @property
+    def delay(self) -> int:
+        return self.__delay
 
-        :param delay: время задержки обновления информации о доступности сайта
-        :return: None
-        """
+    @delay.setter
+    def delay(self, value: int) -> None:
+        if not isinstance(value, int):
+            raise ValueError
+        self.__delay = value
 
-        self.__delay = delay
+    @property
+    def status(self) -> None:
+        return self.__status
+
+    @status.setter
+    def status(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            raise ValueError
+        self.__status = value
 
     def run(self) -> None:
         # TODO настройте метод для корректной работы
 
-        while True:
-            response = requests.get(self.__api_url)
-            data_dict = json.loads(response.json())
-            self.weatherReceived.emit(data_dict["current_weather"])
-            time.sleep(self.__delay)
+        self.status = True
 
-        # while self.__status:
-            # TODO Примерный код ниже
-            """
+        while self.__status:
             response = requests.get(self.__api_url)
-            data = response.json()
-            ваш_сигнал.emit(data)
-            sleep(delay)
-            """
+
+            if response.status_code == 200:
+                data_dict = json.loads(response.json())
+                self.weatherReceived.emit(data_dict["current_weather"])
+                time.sleep(self.delay)
+            else:
+                self.status = False
+                return
