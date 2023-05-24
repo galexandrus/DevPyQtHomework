@@ -11,7 +11,7 @@
 5. DONE установку времени задержки сделать "горячей", т.е. поток должен сразу реагировать на изменение времени задержки
 """
 
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 from a_threads import SystemInfo
 from b_systemInfo_form import Ui_Form
 
@@ -75,9 +75,22 @@ class systemInfoWindow(QtWidgets.QWidget):
         """
         try:
             new_delay = int(self.ui.lineEditTimeDelay.text())
-            self.systemInfoThread.delay = new_delay
+            if new_delay > 0:
+                self.systemInfoThread.delay = new_delay
+            else:
+                self.ui.lineEditTimeDelay.setText("1")
         except ValueError:
             self.ui.lineEditTimeDelay.setText("1")
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Обработка события "Закрытие окна"
+
+        :param event: QtGui.QCloseEvent
+        :return: None
+        """
+        self.systemInfoThread.quit()
+        self.systemInfoThread.terminate()
 
 
 if __name__ == "__main__":

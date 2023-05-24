@@ -142,6 +142,7 @@ class weatherWindow(QtWidgets.QWidget):
         self.ui.pushButtonChangeCoords.setEnabled(True)
         self.ui.lineEditDelay.setEnabled(True)
         self.weatherThread.quit()
+        self.weatherThread.terminate()
 
     def trySetLenLon(self) -> None:
         try:
