@@ -25,6 +25,8 @@ class weatherWindow(QtWidgets.QWidget):
         self.ui.setupUi(self)
 
         self.initUi()
+        self.initThreads()
+        self.initSignals()
 
     def initUi(self) -> None:
         """
@@ -52,7 +54,7 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
-        self.weatherThread = WeatherHandler()
+        self.weatherThread = WeatherHandler(lat=self.ui.lineEditLatitude.text(), lon=self.ui.lineEditLongitude.text())
 
     def initSignals(self) -> None:
         """
@@ -61,14 +63,76 @@ class weatherWindow(QtWidgets.QWidget):
         :return: None
         """
         self.weatherThread.weatherReceived.connect(self.updateWeather)
+        self.ui.pushButtonChangeCoords.clicked.connect(self.onPushButtonChangeCoords)
+        self.ui.pushButtonStop.clicked.connect(self.onPushButtonStop)
+        self.weatherThread.finished.connect(self.weatherThreadFinished)
+        self.ui.pushButtonStart.clicked.connect(self.handleWeatherThread)
+        self.ui.lineEditDelay.textChanged.connect(self.onLineEditDelayTextChanged)
 
     def updateWeather(self, weather: dict) -> None:
+        """
+        Обновление данных в окне
+
+        :param weather: Полученные данные от WeatherHandler
+        :return: None
+        """
         self.ui.labelDateTimeValue.setText(weather["time"])
-        self.ui.labelTemperatureValue.setText(weather["temperature"])
-        self.ui.labelWeatherCodeValue.setText(weather["weathercode"])
-        self.ui.labelIsDayValue.setText(weather["is_day"])
-        self.ui.labelWindDirectionValue.setText(weather["winddirection"])
-        self.ui.labelWindSpeedValue.setText(weather["windspeed"])
+        self.ui.labelTemperatureValue.setText(str(weather["temperature"]))
+        self.ui.labelWeatherCodeValue.setText(str(weather["weathercode"]))
+        self.ui.labelIsDayValue.setText(str(weather["is_day"]))
+        self.ui.labelWindDirectionValue.setText(str(weather["winddirection"]))
+        self.ui.labelWindSpeedValue.setText(str(weather["windspeed"]))
+
+    def onPushButtonChangeCoords(self) -> None:
+        """
+        Обработка сигнала при нажатии на кнопку pushButtonChangeCoords
+
+        :return: None
+        """
+        if self.ui.pushButtonChangeCoords.text() == "Change coordinates":
+            self.ui.pushButtonStart.setEnabled(False)
+            self.ui.lineEditLatitude.setEnabled(True)
+            self.ui.lineEditLongitude.setEnabled(True)
+            self.ui.pushButtonChangeCoords.setText("Save coordinates")
+        else:
+            self.ui.pushButtonStart.setEnabled(True)
+            self.ui.lineEditLatitude.setEnabled(False)
+            self.ui.lineEditLongitude.setEnabled(False)
+            self.ui.pushButtonChangeCoords.setText("Change coordinates")
+        self.weatherThread.lat = float(self.ui.lineEditLatitude.text())
+        self.weatherThread.lon = float(self.ui.lineEditLongitude.text())
+        self.weatherThread.api_url_update()
+
+    def onPushButtonStop(self) -> None:
+        """
+        Обработка сигнала при нажатии на кнопку pushButtonStop
+
+        :return: None
+        """
+        self.weatherThread.finished.emit()
+
+    def onLineEditDelayTextChanged(self) -> None:
+        """
+        Обработка сигнала при изменении значения в lineEditDelayTextChanged
+
+        :return: None
+        """
+        try:
+            self.weatherThread.delay = int(self.ui.lineEditDelay.text())
+        except ValueError:
+            self.ui.lineEditDelay.setText(f"{self.weatherThread.delay}")
+
+    def weatherThreadFinished(self) -> None:
+        """
+        Обработка завершения потока
+
+        :return: None
+        """
+        self.ui.pushButtonStop.setEnabled(False)
+        self.ui.pushButtonStart.setEnabled(True)
+        self.ui.pushButtonChangeCoords.setEnabled(True)
+        self.ui.lineEditDelay.setEnabled(True)
+        # self.weatherThread.delay = 1
 
     def handleWeatherThread(self) -> None:
         """
@@ -76,7 +140,14 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
-
+        self.ui.pushButtonStop.setEnabled(True)
+        self.ui.pushButtonStart.setEnabled(False)
+        self.ui.pushButtonChangeCoords.setEnabled(False)
+        self.weatherThread.start()
+        # if self.weatherThread.status or not self.weatherThread.isRunning():
+        #     self.weatherThread.start()
+        # else:
+        #     self.weatherThread.status = False
 
 
 if __name__ == '__main__':
