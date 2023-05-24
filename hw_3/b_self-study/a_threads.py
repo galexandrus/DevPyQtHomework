@@ -37,18 +37,28 @@ class SystemInfo(QtCore.QThread):
 
 # noinspection PyAttributeOutsideInit,PyPep8Naming
 class WeatherHandler(QtCore.QThread):
-    # TODO Пропишите сигналы, которые считаете нужными
+    # DONE Пропишите сигналы, которые считаете нужными
     weatherReceived = QtCore.Signal(dict)
 
     def __init__(self, lat, lon, parent=None):
         super().__init__(parent)
 
+        self.__lat_default = 59.938955  # Saint-Petersburg latitude
+        self.__lon_default = 30.315644  # Saint-Petersburg longitude
         self.__lat = lat
         self.__lon = lon
-        self.__api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.lat}" \
-                         f"&longitude={self.lon}&current_weather=true"
+        self.__api_url = None
+        self.api_url_update()
         self.__delay = 10
         self.__status = None
+
+    @property
+    def lat_default(self) -> float:
+        return self.__lat_default
+
+    @property
+    def lon_default(self) -> float:
+        return self.__lon_default
 
     @property
     def lat(self) -> float:
@@ -75,8 +85,12 @@ class WeatherHandler(QtCore.QThread):
         return self.__api_url
 
     def api_url_update(self) -> None:
-        self.__api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.lat}" \
-                         f"&longitude={self.lon}&current_weather=true"
+        if self.lat is None or self.lon is None or self.lat == "" or self.lon == "":
+            self.__api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.lat_default}" \
+                             f"&longitude={self.lon_default}&current_weather=true"
+        else:
+            self.__api_url = f"https://api.open-meteo.com/v1/forecast?latitude={self.lat}" \
+                             f"&longitude={self.lon}&current_weather=true"
 
     @property
     def delay(self) -> int:
@@ -99,7 +113,7 @@ class WeatherHandler(QtCore.QThread):
         self.__status = value
 
     def run(self) -> None:
-        # TODO настройте метод для корректной работы
+        # DONE настройте метод для корректной работы
 
         self.status = True
 

@@ -71,7 +71,9 @@ class Ui_Form(object):
         self.labelLatitude.setObjectName(u"labelLatitude")
         self.labelLatitude.setMinimumSize(QSize(150, 40))
         self.labelLatitude.setMaximumSize(QSize(150, 40))
-        self.labelLatitude.setFont(font)
+        font1 = QFont()
+        font1.setPointSize(12)
+        self.labelLatitude.setFont(font1)
 
         self.horizontalLayout.addWidget(self.labelLatitude)
 
@@ -79,7 +81,7 @@ class Ui_Form(object):
         self.lineEditLatitude.setObjectName(u"lineEditLatitude")
         self.lineEditLatitude.setMinimumSize(QSize(150, 40))
         self.lineEditLatitude.setMaximumSize(QSize(150, 40))
-        self.lineEditLatitude.setFont(font)
+        self.lineEditLatitude.setFont(font1)
         self.lineEditLatitude.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout.addWidget(self.lineEditLatitude)
@@ -88,7 +90,7 @@ class Ui_Form(object):
         self.labelLatitudeUnits.setObjectName(u"labelLatitudeUnits")
         self.labelLatitudeUnits.setMinimumSize(QSize(80, 40))
         self.labelLatitudeUnits.setMaximumSize(QSize(80, 40))
-        self.labelLatitudeUnits.setFont(font)
+        self.labelLatitudeUnits.setFont(font1)
 
         self.horizontalLayout.addWidget(self.labelLatitudeUnits)
 
@@ -101,7 +103,7 @@ class Ui_Form(object):
         self.labelLongitude.setObjectName(u"labelLongitude")
         self.labelLongitude.setMinimumSize(QSize(150, 40))
         self.labelLongitude.setMaximumSize(QSize(150, 40))
-        self.labelLongitude.setFont(font)
+        self.labelLongitude.setFont(font1)
 
         self.horizontalLayout_2.addWidget(self.labelLongitude)
 
@@ -109,7 +111,7 @@ class Ui_Form(object):
         self.lineEditLongitude.setObjectName(u"lineEditLongitude")
         self.lineEditLongitude.setMinimumSize(QSize(150, 40))
         self.lineEditLongitude.setMaximumSize(QSize(150, 40))
-        self.lineEditLongitude.setFont(font)
+        self.lineEditLongitude.setFont(font1)
         self.lineEditLongitude.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_2.addWidget(self.lineEditLongitude)
@@ -118,7 +120,7 @@ class Ui_Form(object):
         self.labelLongitudeUnits.setObjectName(u"labelLongitudeUnits")
         self.labelLongitudeUnits.setMinimumSize(QSize(80, 40))
         self.labelLongitudeUnits.setMaximumSize(QSize(80, 40))
-        self.labelLongitudeUnits.setFont(font)
+        self.labelLongitudeUnits.setFont(font1)
 
         self.horizontalLayout_2.addWidget(self.labelLongitudeUnits)
 
@@ -131,7 +133,7 @@ class Ui_Form(object):
         self.labelDelay.setObjectName(u"labelDelay")
         self.labelDelay.setMinimumSize(QSize(150, 40))
         self.labelDelay.setMaximumSize(QSize(150, 40))
-        self.labelDelay.setFont(font)
+        self.labelDelay.setFont(font1)
 
         self.horizontalLayout_4.addWidget(self.labelDelay)
 
@@ -139,7 +141,7 @@ class Ui_Form(object):
         self.lineEditDelay.setObjectName(u"lineEditDelay")
         self.lineEditDelay.setMinimumSize(QSize(150, 40))
         self.lineEditDelay.setMaximumSize(QSize(150, 40))
-        self.lineEditDelay.setFont(font)
+        self.lineEditDelay.setFont(font1)
         self.lineEditDelay.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_4.addWidget(self.lineEditDelay)
@@ -148,7 +150,7 @@ class Ui_Form(object):
         self.labelDelayUnits.setObjectName(u"labelDelayUnits")
         self.labelDelayUnits.setMinimumSize(QSize(80, 40))
         self.labelDelayUnits.setMaximumSize(QSize(80, 40))
-        self.labelDelayUnits.setFont(font)
+        self.labelDelayUnits.setFont(font1)
 
         self.horizontalLayout_4.addWidget(self.labelDelayUnits)
 
@@ -161,7 +163,7 @@ class Ui_Form(object):
         self.labelDateTime.setObjectName(u"labelDateTime")
         self.labelDateTime.setMinimumSize(QSize(150, 40))
         self.labelDateTime.setMaximumSize(QSize(150, 40))
-        self.labelDateTime.setFont(font)
+        self.labelDateTime.setFont(font1)
 
         self.horizontalLayout_5.addWidget(self.labelDateTime)
 
@@ -169,7 +171,7 @@ class Ui_Form(object):
         self.labelDateTimeValue.setObjectName(u"labelDateTimeValue")
         self.labelDateTimeValue.setMinimumSize(QSize(150, 40))
         self.labelDateTimeValue.setMaximumSize(QSize(150, 40))
-        self.labelDateTimeValue.setFont(font)
+        self.labelDateTimeValue.setFont(font1)
         self.labelDateTimeValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_5.addWidget(self.labelDateTimeValue)
@@ -187,7 +189,7 @@ class Ui_Form(object):
         self.labelTemperature.setObjectName(u"labelTemperature")
         self.labelTemperature.setMinimumSize(QSize(150, 40))
         self.labelTemperature.setMaximumSize(QSize(150, 40))
-        self.labelTemperature.setFont(font)
+        self.labelTemperature.setFont(font1)
 
         self.horizontalLayout_6.addWidget(self.labelTemperature)
 
@@ -195,7 +197,7 @@ class Ui_Form(object):
         self.labelTemperatureValue.setObjectName(u"labelTemperatureValue")
         self.labelTemperatureValue.setMinimumSize(QSize(150, 40))
         self.labelTemperatureValue.setMaximumSize(QSize(150, 40))
-        self.labelTemperatureValue.setFont(font)
+        self.labelTemperatureValue.setFont(font1)
         self.labelTemperatureValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_6.addWidget(self.labelTemperatureValue)
@@ -204,7 +206,7 @@ class Ui_Form(object):
         self.labelTemperatureUnits.setObjectName(u"labelTemperatureUnits")
         self.labelTemperatureUnits.setMinimumSize(QSize(80, 40))
         self.labelTemperatureUnits.setMaximumSize(QSize(80, 40))
-        self.labelTemperatureUnits.setFont(font)
+        self.labelTemperatureUnits.setFont(font1)
 
         self.horizontalLayout_6.addWidget(self.labelTemperatureUnits)
 
@@ -217,7 +219,7 @@ class Ui_Form(object):
         self.labelWeatherCode.setObjectName(u"labelWeatherCode")
         self.labelWeatherCode.setMinimumSize(QSize(150, 40))
         self.labelWeatherCode.setMaximumSize(QSize(150, 40))
-        self.labelWeatherCode.setFont(font)
+        self.labelWeatherCode.setFont(font1)
 
         self.horizontalLayout_7.addWidget(self.labelWeatherCode)
 
@@ -225,7 +227,7 @@ class Ui_Form(object):
         self.labelWeatherCodeValue.setObjectName(u"labelWeatherCodeValue")
         self.labelWeatherCodeValue.setMinimumSize(QSize(150, 40))
         self.labelWeatherCodeValue.setMaximumSize(QSize(150, 40))
-        self.labelWeatherCodeValue.setFont(font)
+        self.labelWeatherCodeValue.setFont(font1)
         self.labelWeatherCodeValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_7.addWidget(self.labelWeatherCodeValue)
@@ -243,7 +245,7 @@ class Ui_Form(object):
         self.labelIsDay.setObjectName(u"labelIsDay")
         self.labelIsDay.setMinimumSize(QSize(150, 40))
         self.labelIsDay.setMaximumSize(QSize(150, 40))
-        self.labelIsDay.setFont(font)
+        self.labelIsDay.setFont(font1)
 
         self.horizontalLayout_8.addWidget(self.labelIsDay)
 
@@ -251,7 +253,7 @@ class Ui_Form(object):
         self.labelIsDayValue.setObjectName(u"labelIsDayValue")
         self.labelIsDayValue.setMinimumSize(QSize(150, 40))
         self.labelIsDayValue.setMaximumSize(QSize(150, 40))
-        self.labelIsDayValue.setFont(font)
+        self.labelIsDayValue.setFont(font1)
         self.labelIsDayValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_8.addWidget(self.labelIsDayValue)
@@ -269,7 +271,7 @@ class Ui_Form(object):
         self.labelWindDirection.setObjectName(u"labelWindDirection")
         self.labelWindDirection.setMinimumSize(QSize(150, 40))
         self.labelWindDirection.setMaximumSize(QSize(150, 40))
-        self.labelWindDirection.setFont(font)
+        self.labelWindDirection.setFont(font1)
 
         self.horizontalLayout_9.addWidget(self.labelWindDirection)
 
@@ -277,7 +279,7 @@ class Ui_Form(object):
         self.labelWindDirectionValue.setObjectName(u"labelWindDirectionValue")
         self.labelWindDirectionValue.setMinimumSize(QSize(150, 40))
         self.labelWindDirectionValue.setMaximumSize(QSize(150, 40))
-        self.labelWindDirectionValue.setFont(font)
+        self.labelWindDirectionValue.setFont(font1)
         self.labelWindDirectionValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_9.addWidget(self.labelWindDirectionValue)
@@ -295,7 +297,7 @@ class Ui_Form(object):
         self.labelWindSpeed.setObjectName(u"labelWindSpeed")
         self.labelWindSpeed.setMinimumSize(QSize(150, 40))
         self.labelWindSpeed.setMaximumSize(QSize(150, 40))
-        self.labelWindSpeed.setFont(font)
+        self.labelWindSpeed.setFont(font1)
 
         self.horizontalLayout_10.addWidget(self.labelWindSpeed)
 
@@ -303,7 +305,7 @@ class Ui_Form(object):
         self.labelWindSpeedValue.setObjectName(u"labelWindSpeedValue")
         self.labelWindSpeedValue.setMinimumSize(QSize(150, 40))
         self.labelWindSpeedValue.setMaximumSize(QSize(150, 40))
-        self.labelWindSpeedValue.setFont(font)
+        self.labelWindSpeedValue.setFont(font1)
         self.labelWindSpeedValue.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_10.addWidget(self.labelWindSpeedValue)
@@ -312,7 +314,7 @@ class Ui_Form(object):
         self.labelWindSpeedUnits.setObjectName(u"labelWindSpeedUnits")
         self.labelWindSpeedUnits.setMinimumSize(QSize(80, 40))
         self.labelWindSpeedUnits.setMaximumSize(QSize(80, 40))
-        self.labelWindSpeedUnits.setFont(font)
+        self.labelWindSpeedUnits.setFont(font1)
 
         self.horizontalLayout_10.addWidget(self.labelWindSpeedUnits)
 

@@ -4,13 +4,13 @@
 Создавать форму можно как в ручную, так и с помощью программы Designer
 
 Форма должна содержать:
-1. поле для ввода широты и долготы (после запуска потока они должны блокироваться)
-2. поле для ввода времени задержки (после запуска потока оно должно блокироваться)
-3. поле для вывода информации о погоде в указанных координатах
-4. поток необходимо запускать и останавливать при нажатии на кнопку
+1. DONE поле для ввода широты и долготы (после запуска потока они должны блокироваться)
+2. DONE поле для ввода времени задержки (после запуска потока оно должно блокироваться)
+3. DONE поле для вывода информации о погоде в указанных координатах
+4. DONE поток необходимо запускать и останавливать при нажатии на кнопку
 """
 
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 from a_threads import WeatherHandler
 from c_weatherapi_form import Ui_Form
 
@@ -34,9 +34,9 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
-        self.ui.lineEditLatitude.setText("59.938955")
+        self.ui.lineEditLatitude.setText("")
         self.ui.lineEditLatitude.setEnabled(False)
-        self.ui.lineEditLongitude.setText("30.315644")
+        self.ui.lineEditLongitude.setText("")
         self.ui.lineEditLongitude.setEnabled(False)
         self.ui.lineEditDelay.setText("10")
         self.ui.labelDateTimeValue.setText("")
@@ -48,13 +48,19 @@ class weatherWindow(QtWidgets.QWidget):
 
         self.ui.pushButtonStop.setEnabled(False)
 
+        self.ui.lineEditLatitude.setPlaceholderText("-90 < lat < 90")
+        self.ui.lineEditLongitude.setPlaceholderText("-180 < lon < 180")
+
     def initThreads(self) -> None:
         """
         Инициализация потоков
 
         :return: None
         """
-        self.weatherThread = WeatherHandler(lat=self.ui.lineEditLatitude.text(), lon=self.ui.lineEditLongitude.text())
+        # self.checkLatLon()
+        latitude = self.ui.lineEditLatitude.text()
+        longitude = self.ui.lineEditLongitude.text()
+        self.weatherThread = WeatherHandler(lat=latitude, lon=longitude)
 
     def initSignals(self) -> None:
         """
@@ -62,11 +68,13 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
-        self.weatherThread.weatherReceived.connect(self.updateWeather)
         self.ui.pushButtonChangeCoords.clicked.connect(self.onPushButtonChangeCoords)
         self.ui.pushButtonStop.clicked.connect(self.onPushButtonStop)
-        self.weatherThread.finished.connect(self.weatherThreadFinished)
         self.ui.pushButtonStart.clicked.connect(self.handleWeatherThread)
+
+        self.weatherThread.weatherReceived.connect(self.updateWeather)
+        self.weatherThread.finished.connect(self.weatherThreadFinished)
+
         self.ui.lineEditDelay.textChanged.connect(self.onLineEditDelayTextChanged)
 
     def updateWeather(self, weather: dict) -> None:
@@ -98,10 +106,11 @@ class weatherWindow(QtWidgets.QWidget):
             self.ui.pushButtonStart.setEnabled(True)
             self.ui.lineEditLatitude.setEnabled(False)
             self.ui.lineEditLongitude.setEnabled(False)
+
+            self.trySetLenLon()
+            self.weatherThread.api_url_update()
+
             self.ui.pushButtonChangeCoords.setText("Change coordinates")
-        self.weatherThread.lat = float(self.ui.lineEditLatitude.text())
-        self.weatherThread.lon = float(self.ui.lineEditLongitude.text())
-        self.weatherThread.api_url_update()
 
     def onPushButtonStop(self) -> None:
         """
@@ -132,7 +141,19 @@ class weatherWindow(QtWidgets.QWidget):
         self.ui.pushButtonStart.setEnabled(True)
         self.ui.pushButtonChangeCoords.setEnabled(True)
         self.ui.lineEditDelay.setEnabled(True)
-        # self.weatherThread.delay = 1
+        self.weatherThread.quit()
+
+    def trySetLenLon(self) -> None:
+        try:
+            self.weatherThread.lat = float(self.ui.lineEditLatitude.text())
+        except ValueError:
+            self.weatherThread.lat = self.weatherThread.lat_default
+            self.ui.lineEditLatitude.setText(f"{self.weatherThread.lat}")
+        try:
+            self.weatherThread.lon = float(self.ui.lineEditLongitude.text())
+        except ValueError:
+            self.weatherThread.lon = self.weatherThread.lon_default
+            self.ui.lineEditLongitude.setText(f"{self.weatherThread.lon}")
 
     def handleWeatherThread(self) -> None:
         """
@@ -140,14 +161,27 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
+        self.trySetLenLon()
+        self.weatherThread.api_url_update()
+
         self.ui.pushButtonStop.setEnabled(True)
         self.ui.pushButtonStart.setEnabled(False)
         self.ui.pushButtonChangeCoords.setEnabled(False)
-        self.weatherThread.start()
-        # if self.weatherThread.status or not self.weatherThread.isRunning():
-        #     self.weatherThread.start()
-        # else:
-        #     self.weatherThread.status = False
+
+        if not self.weatherThread.isRunning():
+            self.weatherThread.start()
+        if not self.weatherThread.isFinished():
+            self.weatherThread.exec()
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Обработка события "Закрытие окна"
+
+        :param event: QtGui.QCloseEvent
+        :return: None
+        """
+        self.weatherThread.quit()
+        self.weatherThread.terminate()
 
 
 if __name__ == '__main__':
