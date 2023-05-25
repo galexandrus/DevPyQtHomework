@@ -57,7 +57,6 @@ class weatherWindow(QtWidgets.QWidget):
 
         :return: None
         """
-        # self.checkLatLon()
         latitude = self.ui.lineEditLatitude.text()
         longitude = self.ui.lineEditLongitude.text()
         self.weatherThread = WeatherHandler(lat=latitude, lon=longitude)
@@ -141,8 +140,8 @@ class weatherWindow(QtWidgets.QWidget):
         self.ui.pushButtonStart.setEnabled(True)
         self.ui.pushButtonChangeCoords.setEnabled(True)
         self.ui.lineEditDelay.setEnabled(True)
-        self.weatherThread.quit()
-        self.weatherThread.terminate()
+        # self.weatherThread.quit()
+        # self.weatherThread.terminate()
 
     def trySetLenLon(self) -> None:
         try:
