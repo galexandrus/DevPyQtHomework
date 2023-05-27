@@ -64,7 +64,13 @@ class Window(QtWidgets.QWidget):
         self.signCaught.connect(self.onSignCaught)
         self.ui.pushButtonShowTop5.clicked.connect(self.onPushButtonShowTop5)
 
-    def onSignCaught(self, sign: str):
+    def onSignCaught(self, sign: str) -> None:
+        """
+        Обработка сигнала при нажатии клавиши движения (wasd)
+
+        :param sign: Один из символов: w, a, s, d, ц, ф, ы, в
+        :return: None
+        """
         self.current_sign = sign
         self.makeTurn()
 
@@ -81,8 +87,14 @@ class Window(QtWidgets.QWidget):
             self.updateField()
             self.current_sign = None
         else:  # If we can't insert a new value
+            self.ui.labelStatusBar.setText(f"Game over!\ttop 1: {self.game.top_score[0]}\n"
+                                           f"\t\ttop 2: {self.game.top_score[1]}\n"
+                                           f"\t\ttop 3: {self.game.top_score[2]}\n"
+                                           f"\t\ttop 4: {self.game.top_score[3]}\n"
+                                           f"\t\ttop 5: {self.game.top_score[4]}")
             self.signCaught.disconnect(self.onSignCaught)
-            # self.gameOver()
+            self.ui.pushButtonShowTop5.setEnabled(False)
+            self.game.is_game_over = True
 
     def updateField(self) -> None:
         """
@@ -134,27 +146,35 @@ class Window(QtWidgets.QWidget):
         :param event: QtGui.QKeyEvent
         :return: None
         """
-        if event.text() in self.game.signs_to_move:
-            self.signCaught.emit(event.text())
-            self.ui.labelStatusBar.setText("")
-        else:
-            self.ui.labelStatusBar.setText("The sign must be in 'wasd': \n"
-                                           "w - move up\n"
-                                           "a - move left\n"
-                                           "s - move down\n"
-                                           "d - move right")
+        if not self.game.is_game_over:
+            if event.text() in self.game.signs_to_move:
+                self.signCaught.emit(event.text())
+            else:
+                self.ui.labelStatusBar.setText("The sign must be in 'wasd': \n"
+                                               "w - move up\n"
+                                               "a - move left\n"
+                                               "s - move down\n"
+                                               "d - move right")
 
-    def onPushButtonShowTop5(self):
+    def onPushButtonShowTop5(self) -> None:
+        """
+        Обработка события при нажатии на кнопку pushButtonShowTop5
+
+        :return: None
+        """
         self.ui.labelStatusBar.setText(f"top 1: {self.game.top_score[0]}\n"
                                        f"top 2: {self.game.top_score[1]}\n"
                                        f"top 3: {self.game.top_score[2]}\n"
                                        f"top 4: {self.game.top_score[3]}\n"
                                        f"top 5: {self.game.top_score[4]}")
 
-    # def gameOver(self):
-    #     self.game.update_top_score()
-
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Обработка события закрытие окна
+
+        :param event: QtGui.QCloseEvent
+        :return: None
+        """
         self.game.update_top_score()
         topScoreInMemory = QtCore.QSettings("game_2048_top_score")
         topScoreInMemory.setValue("text", " ".join([str(score) for score in self.game.top_score]))
